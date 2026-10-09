@@ -1,25 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang=”en”>
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1">
+ <meta charset=”UTF-8”>
+ <meta name=”viewport” content=”width=device-width, initial-scale=1”>
  <title>ENEMIES OF HELLDIVERS</title>
  <style>
-   body { margin: 0; font-family: Arial, sans-serif; background: #111; color: #f2f2f2; }
-   header { text-align: center; padding: 20px; border-bottom: 3px solid #ffe81f; }
-   header h1 { margin: 0; letter-spacing: 3px; color: #ffe81f; }
+   Body { margin: 0; font-family: Arial, sans-serif; background: #111; color: #f2f2f2; }
+   Header { text-align: center; padding: 20px; border-bottom: 3px solid #ffe81f; }
+   Header h1 { margin: 0; letter-spacing: 3px; color: #ffe81f; }
    .game-photo {
-     max-width: 900px; margin: 20px auto; height: 300px;
-     border: 2px solid #ffe81f; display: flex; align-items: center;
-     justify-content: center; font-size: 28px; background: #222;
+     Max-width: 900px; margin: 20px auto; height: 300px;
+     Border: 2px solid #ffe81f; display: flex; align-items: center;
+     Justify-content: center; font-size: 28px; background: #222;
    }
    .divider { text-align: center; font-size: 24px; letter-spacing: 8px; margin: 10px 0 20px; }
    .faction { max-width: 900px; margin: 0 auto 30px; padding: 15px; border-top: 2px solid #555; }
    .faction-header { display: flex; align-items: center; gap: 15px; }
    .faction-icon {
-     width: 70px; height: 70px; border: 2px solid #ffe81f; border-radius: 50%;
-     display: flex; align-items: center; justify-content: center;
-     font-size: 11px; text-align: center;
+     Width: 70px; height: 70px; border: 2px solid #ffe81f; border-radius: 50%;
+     Display: flex; align-items: center; justify-content: center;
+     Font-size: 11px; text-align: center;
    }
    .faction h2 { margin: 0; letter-spacing: 2px; }
    .count { margin-left: auto; font-size: 14px; color: #aaa; }
@@ -27,4 +27,156 @@
    .carousel { display: flex; align-items: center; gap: 10px; margin-top: 15px; }
    .enemies { display: flex; gap: 15px; flex: 1; }
    .enemy {
-     flex: 1 1 0; min-width: 0; background: #222;
+     Flex: 1 1 0; min-width: 0; background: #222;
+     Border: 1px solid #555; padding: 10px;
+   }
+   .enemy-photo {
+     Height: 120px; border: 1px solid #888; display: flex;
+     Align-items: center; justify-content: center; background: #333;
+     Overflow: hidden; font-size: 13px; text-align: center;
+   }
+   .enemy-photo img { width: 100%; height: 100%; object-fit: cover; }
+   .enemy h3 { margin: 10px 0 5px; border-bottom: 1px solid #888; padding-bottom: 5px; font-size: 16px; }
+   .enemy p { margin: 0; font-size: 14px; }
+   .arrow {
+     Background: #ffe81f; color: #111; border: none; font-size: 24px;
+     Width: 44px; height: 44px; border-radius: 50%; cursor: pointer; flex-shrink: 0;
+   }
+   .arrow:hover { background: #fff; }
+ </style>
+</head>
+<body>
+ 
+ <header>
+   <h1>ENEMIES OF HELLDIVERS</h1>
+ </header>
+ 
+ <div class=”game-photo”>PHOTO OF GAME</div>
+ 
+ <div class=”divider”>○ ○ ○ ☠ ○ ○ ○</div>
+ 
+ <section class=”faction” id=”automatons”>
+   <div class=”faction-header”>
+     <div class=”faction-icon”>ICON</div>
+     <h2>AUTOMATONS</h2>
+     <span class=”count”></span>
+   </div>
+   <div class=”carousel”>
+     <div class=”enemies”></div>
+     <button class=”arrow” aria-label=”Next enemies”>&#10095;</button>
+   </div>
+ </section>
+ 
+ <section class=”faction” id=”terminids”>
+   <div class=”faction-header”>
+     <div class=”faction-icon”>ICON</div>
+     <h2>TERMINIDS</h2>
+     <span class=”count”></span>
+   </div>
+   <div class=”carousel”>
+     <div class=”enemies”></div>
+     <button class=”arrow” aria-label=”Next enemies”>&#10095;</button>
+   </div>
+ </section>
+ 
+ <section class=”faction” id=”illuminate”>
+   <div class=”faction-header”>
+     <div class=”faction-icon”>ICON</div>
+     <h2>ILLUMINATE</h2>
+     <span class=”count”></span>
+   </div>
+   <div class=”carousel”>
+     <div class=”enemies”></div>
+     <button class=”arrow” aria-label=”Next enemies”>&#10095;</button>
+   </div>
+ </section>
+ 
+ <script>
+   // How many enemies are visible at once
+   Var PER_PAGE = 3;
+ 
+   // Edit these lists to add real enemies.
+   // Each enemy: { name: “…”, about: “…”, img: “photo.jpg” }  (img is optional)
+   // Anything not filled in stays a placeholder until the total is reached.
+   Var factions = {
+     Automatons: { total: 36, label: “Automaton”, enemies: [
+       // { name: “Trooper”, about: “Basic infantry.”, img: “trooper.jpg” },
+     ]},
+     Terminids: { total: 30, label: “Terminid”, enemies: [
+       // { name: “Warrior”, about: “Fast melee bug.”, img: “warrior.jpg” },
+     ]},
+     Illuminate: { total: 14, label: “Illuminate”, enemies: [
+       // { name: “Voteless”, about: “Mindless footsoldier.”, img: “voteless.jpg” },
+     ]}
+   };
+ 
+   Function setupCarousel(id) {
+     Var data = factions[id];
+     Var section = document.getElementById(id);
+     Var container = section.querySelector(“.enemies”);
+     Var button = section.querySelector(“.arrow”);
+     Var counter = section.querySelector(“.count”);
+ 
+     // Build the full list, filling with placeholders
+     Var list = [];
+     For (var I = 0; I < data.total; i++) {
+       List.push(data.enemies[i] || {
+         Name: data.label + “ “ + (I + 1),
+         About: “About enemy”,
+         Img: “”
+       });
+     }
+ 
+     Var start = 0;
+ 
+     Function render() {
+       Container.innerHTML = “”;
+       Var end = Math.min(start + PER_PAGE, list.length);
+       For (var I = start; I < end; i++) {
+         Var e = list[i];
+         Var card = document.createElement(“div”);
+         Card.className = “enemy”;
+ 
+         Var photo = document.createElement(“div”);
+         Photo.className = “enemy-photo”;
+         If (e.img) {
+           Var img = document.createElement(“img”);
+           Img.src = e.img;
+           Img.alt = e.name;
+           Photo.appendChild(img);
+         } else {
+           Photo.textContent = “Photo of enemy”;
+         }
+ 
+         Var name = document.createElement(“h3”);
+         Name.textContent = e.name;
+ 
+         Var about = document.createElement(“p”);
+         About.textContent = e.about;
+ 
+         Card.appendChild(photo);
+         Card.appendChild(name);
+         Card.appendChild(about);
+         Container.appendChild(card);
+       }
+       Counter.textContent = (start + 1) + “-“ + end + “ of “ + list.length;
+     }
+ 
+     Button.addEventListener(“click”, function () {
+       Start += PER_PAGE;
+       If (start >= list.length) {
+         Start = 0; // loop back to the first enemy
+       }
+       Render();
+     });
+ 
+     Render();
+   }
+ 
+   setupCarousel(“automatons”);
+   setupCarousel(“terminids”);
+   setupCarousel(“illuminate”);
+ </script>
+ 
+</body>
+</html>
