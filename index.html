@@ -273,5 +273,48 @@
     setupCarousel("illuminate");
   </script>
 
+  <script>
+    var slides = [
+  "MainGameImage.png",
+  "coverimages/IMG_ESCALATIONOFFREEDOM.png",
+  "coverimages/IMG_OMENSOFTYRANNY.png",
+  "coverimages/IMG_HEARTOFDEMOCRACY.png",
+  "coverimages/IMG_INTOTHEUNJUST.png",
+  "coverimages/IMG_MACHINERYOFOPPRESSION.png"
+];
+var slideIndex = 0;
+var slideTimer;
+var slideImg = document.getElementById("slide-img");
+var dots = document.querySelectorAll("#dots .dot");
+
+function showSlide(i) {
+  slideIndex = i;
+  slideImg.src = slides[i];
+  for (var d = 0; d < dots.length; d++) {
+    dots[d].classList.remove("active");
+  }
+  dots[i].classList.add("active");
+}
+
+function startSlideTimer() {
+  clearInterval(slideTimer);
+  slideTimer = setInterval(function () {
+    showSlide((slideIndex + 1) % slides.length);
+  }, 4000);
+}
+
+for (var k = 0; k < dots.length; k++) {
+  (function (n) {
+    dots[n].addEventListener("click", function () {
+      showSlide(n);
+      startSlideTimer();
+    });
+  })(k);
+}
+
+showSlide(0);
+startSlideTimer();
+  </scriptt
+
 </body>
 </html>
